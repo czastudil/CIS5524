@@ -1,7 +1,0 @@
-*.pkl
-saved_model/
-saved_model_articles/
-__pycache__
-archive/
-*.txt
-/data
