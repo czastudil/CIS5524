@@ -95,7 +95,7 @@ class WikipediaNetwork:
             nx.draw_networkx_labels(subgraph, pos_attrs, labels=nx.get_node_attributes(subgraph, 'categories'))
             plt.show()
         except:
-           # print('Article does not exist.')
+           print('Article does not exist.')
     
     # Utility function
     def find_article_hubs(self):
@@ -149,3 +149,22 @@ class WikipediaNetwork:
         if category != None:
             overlap = self.find_category_overlap('Living_people')
         return overlap, avg_deg, article_hubs, smallest_deg, cat_hubs
+    
+    def update_network(self, new_article, category, links):
+        if new_article not in self.article_mapping.keys():
+            # Update article mapping
+            article_num = str(len(list(self.g.nodes)) + 1)
+            self.article_mapping[new_article] =  article_num
+            self.node_mapping[article_num] = new_article
+            # Update category mapping
+            current_mapping = nx.get_node_attributes(self.g, 'categories')
+            current_mapping[category].append(article_num)
+            nx.set_node_attributes(self.g, self.node_category_mapping, name='categories')
+            self.node_category_mapping[article_num] = [category]
+            # Add new node & links
+            self.g.add_node(article_num, article_name=new_article, categories=self.node_category_mapping[article_num])
+            for l in links:
+                self.g.add_edge(article_num, self.article_mapping[l])
+        else:
+            print("Article already exists.")
+        
